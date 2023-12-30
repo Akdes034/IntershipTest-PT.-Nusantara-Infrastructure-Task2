@@ -40,13 +40,19 @@ class AuthController extends Controller
             'password' => 'required',
             'full_name' => 'required',
         ]);
-
+    
+        $existingUser = User::where('username', $validatedData['username'])->first();
+        if ($existingUser) {
+            return response()->json(['message' => 'Username sudah digunakan'], 422);
+        }
+    
         $validatedData['password'] = Hash::make($validatedData['password']);
-
+    
         $user = User::create($validatedData);
-
+    
         return response()->json(['message' => 'Pendaftaran berhasil', 'user' => $user], 201);
     }
+    
 
     public function logout(Request $request)
     {
